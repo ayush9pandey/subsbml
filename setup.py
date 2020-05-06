@@ -3,11 +3,11 @@ from setuptools import setup
 # Get the long description from the README file
 with open('README.md') as fp:
     long_description = ''
-    # long_description = fp.read()
+    long_description = fp.read()
 
 setup(
     name = 'subsbml',
-    version = '0.1',
+    version = '0.2',
     author = 'BuildACell',
     author_email = 'apandey@caltech.edu',
     url = 'https://github.com/BuildACell/subsbml',
@@ -28,4 +28,11 @@ setup(
         'Operating System :: MacOS'
         'Operating System :: Microsoft :: Windows'
     ],
+    install_requires=[
+          'python-libsbml',
+          'numpy',
+          'nose',
+      ],
+    test_suite='nose.collector',
+    tests_require=['nose'],
 )
