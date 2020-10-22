@@ -1,7 +1,6 @@
 ## Sub-SBML
 Sub-SBML is a Python based toolbox  
 
-
 # Sub-SBML
 ## Python toolbox to to create, edit, combine, and model interactions among multiple Systems Biology Markup Language [(SBML)](http://sbml.org) models.
 
@@ -9,7 +8,7 @@ Sub-SBML is a Python based toolbox
 [![codecov](https://codecov.io/gh/BuildACell/subsbml/branch/master/graph/badge.svg)](https://codecov.io/gh/BuildACell/subsbml)
 [![PyPI version](https://badge.fury.io/py/subsbml.svg)](https://badge.fury.io/py/subsbml)
 
-Sub-SBML works with a “subsystem” architecture of modeling where a single SBML model can be contained within a subsystem. 
+Sub-SBML works with a "subsystem" architecture of modeling where a single SBML model can be contained within a subsystem. 
 Three major functionalities are developed in Sub-SBML that take advantage of this subsystem framework of modeling –  
 creating subsystems, combining multiple subsystems, and modeling interactions such as transport of molecules and input-output relationships among multiple subsystems. 
 
@@ -21,7 +20,6 @@ Contact : Ayush Pandey (apandet at caltech dot edu) for any feedback or suggesti
 
 
 - **Website:** https://github.com/BuildACell/subsbml
-<!-- - **Paper:** [Introduction](https://www.biorxiv.org/content/10.1101/640276v1.full), [Toolbox](https://www.biorxiv.org/content/10.1101/2020.02.15.950840v2.full.pdf) -->
 - **Source:** https://github.com/BuildACell/subsbml
 - **Bug reports:** https://github.com/buildacell/subsbml/issues
 - **Documentation:** Coming Soon on: [subsbml.readthedocs.io](https://readthedocs.org/projects/subsbml/)
@@ -55,4 +53,3 @@ Sub-SBML versions:
 Released under the BSD 3-Clause License (see `LICENSE`)
 
 Copyright (c) 2020, Ayush Pandey. All rights reserved.
-

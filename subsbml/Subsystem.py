@@ -405,8 +405,6 @@ class Subsystem(object):
 
         if len(oldCompartments) != len(newCompartments):
             raise ValueError('The number of old compartments given is not the same as the number of new compartments in the model.')
-            
-   
         else:
             for i in range(len(oldCompartments)):
                 # rename compartment name and id
@@ -1772,7 +1770,8 @@ class Subsystem(object):
         compartment_found =[]
         for compartment in model.getListOfCompartments():
             if compartment.isSetName():
-                if compartment.getName() == name:
+                # If name exactly matches or is part of the string:
+                if compartment.getName() == name or name in compartment.getName():
                     compartment_found.append(compartment)
             else:
                 warnings.warn('Compartment {0} does not have a name attribute. It will not be returned in the list returned in this getCompartmentsByName call.'.format(compartment.getId())) if verbose else None

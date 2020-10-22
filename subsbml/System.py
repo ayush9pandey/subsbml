@@ -474,7 +474,7 @@ class System(object):
         return system_sbml
 
 
-def combineSystems(ListOfSystems, mode = 'virtual'):
+def combineSystems(ListOfSystems, mode = 'virtual', **kwargs):
     '''
     Returns a combined model (SBMLDocument object) of different Systems by combining - 
     1. All subsystems internal, external, and membrane of all Systems given in the ListOfSystems argument.
@@ -503,7 +503,10 @@ def combineSystems(ListOfSystems, mode = 'virtual'):
                     ListOfSubsystems.append(s)
             else:
                 raise ValueError('All items in list of subsystems should be Subsystem object')
-                
+    # Rename compartment names to make a common external compartment:
+    for subsystem in ListOfSubsystems:
+        system_name = subsystem.getSystem().getSystemName()
+        subsystem.renameCompartments(system_name + '_external', 'external')
     # Remove duplicate elements from ListOfSubsystems
     subsystem_list_final = []
     for subsystem in ListOfSubsystems:

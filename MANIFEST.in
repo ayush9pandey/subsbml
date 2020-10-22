@@ -1,7 +1,7 @@
-include examples/*.py
-include tutorials/*.py
 include tests/*.py
-include models/*.xml
+include setup.py
+include setup.cfg
+include MANIFEST.in
 include README.md
 include LICENSE
 exclude subsbml.egg-info/*
