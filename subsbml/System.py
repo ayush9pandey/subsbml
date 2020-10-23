@@ -458,19 +458,19 @@ class System(object):
         3. All subsystems in the membrane to the System (in respective compartments called '<system_name>_internal' and '<system_name>_external')
         '''
         system_sbml = createNewSubsystem()
-        sys_internal_membrane = createNewSubsystem()
-        internal_combined_subsystems = createNewSubsystem()
-        internal_combined_subsystems.combineSubsystems(self.ListOfInternalSubsystems, mode = mode, **kwargs)
-        external_combined_subsystems = createNewSubsystem()
-        external_combined_subsystems.combineSubsystems(self.ListOfExternalSubsystems, mode = mode, **kwargs)
-        membranes = self.ListOfMembraneSubsystems
-        membrane_internal = []
-        for membrane in membranes:
-            membrane_internal.append(membrane)
-        membrane_internal.append(internal_combined_subsystems)
-        sys_internal_membrane.combineSubsystems(membrane_internal, mode = mode, **kwargs)
-        system_sbml.combineSubsystems([external_combined_subsystems, sys_internal_membrane], mode = mode, **kwargs)
-        # system_sbml.combineSubsystems([self.ListOfInternalSubsystems, self.ListOfExternalSubsystems, self.ListOfMembraneSubsystems], mode = mode, **kwargs)
+        # sys_internal_membrane = createNewSubsystem()
+        # internal_combined_subsystems = createNewSubsystem()
+        # internal_combined_subsystems.combineSubsystems(self.ListOfInternalSubsystems, mode = mode, **kwargs)
+        # external_combined_subsystems = createNewSubsystem()
+        # external_combined_subsystems.combineSubsystems(self.ListOfExternalSubsystems, mode = mode, **kwargs)
+        # membranes = self.ListOfMembraneSubsystems
+        # membrane_internal = []
+        # for membrane in membranes:
+        #     membrane_internal.append(membrane)
+        # membrane_internal.append(internal_combined_subsystems)
+        # sys_internal_membrane.combineSubsystems(membrane_internal, mode = mode, **kwargs)
+        # system_sbml.combineSubsystems([external_combined_subsystems, sys_internal_membrane], mode = mode, **kwargs)
+        system_sbml.combineSubsystems([self.ListOfInternalSubsystems, self.ListOfExternalSubsystems, self.ListOfMembraneSubsystems], mode = mode, **kwargs)
         return system_sbml
 
 
@@ -503,16 +503,13 @@ def combineSystems(ListOfSystems, mode = 'virtual', **kwargs):
                     ListOfSubsystems.append(s)
             else:
                 raise ValueError('All items in list of subsystems should be Subsystem object')
-    # Rename compartment names to make a common external compartment:
-    for subsystem in ListOfSubsystems:
-        system_name = subsystem.getSystem().getSystemName()
-        subsystem.renameCompartments(system_name + '_external', 'external')
-    # Remove duplicate elements from ListOfSubsystems
     subsystem_list_final = []
     for subsystem in ListOfSubsystems:
         if subsystem not in subsystem_list_final:
             subsystem_list_final.append(subsystem)
     newSS.combineSubsystems(subsystem_list_final, mode)
+    final_subsystem = createNewSubsystem()
+    newSS.combineSubsystem(newSS)
     return newSS
 
 

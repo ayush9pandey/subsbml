@@ -419,7 +419,7 @@ class Subsystem(object):
                 self.renameSId(oldid, trans.getValidIdForName(newCompartments[i]))
         return self.getSBMLDocument()
     
-    def createNewModel(self, modelId, timeUnits, extentUnits, substanceUnits):
+    def createNewModel(self, modelId, timeUnits, extentUnits, substanceUnits = None):
         '''
         Creates a new Model object in the SBMLDocument of this Subsystem 
         with the given attributes. 
@@ -435,8 +435,9 @@ class Subsystem(object):
             sys.exit(1)
         check(model.setTimeUnits(timeUnits), 'set model-wide time units')
         check(model.setExtentUnits(extentUnits), 'set model units of extent')
-        check(model.setSubstanceUnits(substanceUnits),
-              'set model substance units')
+        if substanceUnits is not None:
+            check(model.setSubstanceUnits(substanceUnits),
+                    'set model substance units')
         return model
 
     def mergeSubsystemModels(self, ListOfSubsystems, **kwargs):
@@ -667,13 +668,13 @@ class Subsystem(object):
             mod_id += '_' + sub_model.getId()
             subsystem.combineSubsystem(ListOfResources, mode)
         if combineNames == True:
-            self.combineCompartments(ListOfSubsystems, **kwargs)
             self.combineSpecies(ListOfSubsystems,ListOfResources, mode, **kwargs)
             self.combineParameters(ListOfSubsystems, **kwargs)
             self.combineReactions(ListOfSubsystems, **kwargs)
             self.combineEvents(ListOfSubsystems, **kwargs)
             self.combineFunctionDefinitions(ListOfSubsystems, **kwargs)
             self.combineUnitDefinitions(ListOfSubsystems, **kwargs)
+            self.combineCompartments(ListOfSubsystems, **kwargs)
         # For biocircuits specific annotations:
         self.fixAnnotations(**kwargs)
 
@@ -687,13 +688,13 @@ class Subsystem(object):
         Returns SBML document object of the current Susbsytem object with all duplicate species, reactions etc. combined together.
         Can be used to implement resource sharing within a given Subsystem object.
         '''
-        self.combineCompartments([], **kwargs)
         self.combineSpecies([], ListOfResources, mode, **kwargs)        
         self.combineParameters([], **kwargs)
         self.combineReactions([], **kwargs)
         self.combineUnitDefinitions([], **kwargs)
         self.combineFunctionDefinitions([], **kwargs)
         self.combineEvents([], **kwargs)
+        self.combineCompartments([], **kwargs)
         return self.getSBMLDocument()
 
     
@@ -754,6 +755,7 @@ class Subsystem(object):
 
     def shareSpecies(self, ListOfSubsystems, ListOfResources, mode, **kwargs):
         verbose = kwargs.get('verbose') if 'verbose' in kwargs else None
+        ignoreUnits = kwargs.get('ignoreUnits') if 'ignoreUnits' in kwargs else True
         model = self.getSBMLDocument().getModel()
         if ListOfSubsystems == []:
             if self.isSetSystem():
@@ -797,7 +799,7 @@ class Subsystem(object):
                             species = model.getElementBySId(species_id)
                             check(species,'retreiving species by id in shareSpecies if case')
                             if species.isSetUnits():
-                                if species.getUnits() != uni_sp.getUnits():
+                                if species.getUnits() != uni_sp.getUnits() and not ignoreUnits:
                                     warnings.warn('Species with same name have different units. They will not be combined. For {0} species id.'.format(species.getId())) if verbose else None
                                     break
                             if species.getConstant() != uni_sp.getConstant():
@@ -907,7 +909,7 @@ class Subsystem(object):
                     uni_sp = final_species_hash_map[unique_species_name][0]
                     for species in final_species_hash_map[unique_species_name]:
                         if species.isSetUnits():
-                            if species.getUnits() != uni_sp.getUnits():
+                            if species.getUnits() != uni_sp.getUnits() and not ignoreUnits:
                                 warnings.warn('Species with same name have different units. They will not be combined. For {0} species id.'.format(species.getId())) if verbose else None
                                 break
                         if species.getConstant() != uni_sp.getConstant():
@@ -988,6 +990,7 @@ class Subsystem(object):
 
     def combineSpecies(self, ListOfSubsystems, ListOfResources, mode, **kwargs):
         verbose = kwargs.get('verbose') if 'verbose' in kwargs else None
+        ignoreUnits = kwargs.get('ignoreUnits') if 'ignoreUnits' in kwargs else True
         model = self.getSBMLDocument().getModel()
         if ListOfSubsystems == []:
             if self.isSetSystem():
@@ -1023,7 +1026,7 @@ class Subsystem(object):
                         comp = mod.getElementBySId(species.getCompartment())
                         check(species,'retreiving species by id in combineSubsystem virtual')
                         if species.isSetUnits():
-                            if species.getUnits() != uni_sp.getUnits():
+                            if species.getUnits() != uni_sp.getUnits() and not ignoreUnits:
                                 warnings.warn('Species with same name have different units. They will not be combined. For {0} species id.'.format(species.getId())) if verbose else None
                                 break
                         if species.getConstant() != uni_sp.getConstant():
@@ -1125,7 +1128,7 @@ class Subsystem(object):
                         mod = species.getModel()
                         comp = mod.getElementBySId(species.getCompartment())
                         if species.isSetUnits():
-                            if species.getUnits() != uni_sp.getUnits():
+                            if species.getUnits() != uni_sp.getUnits() and not ignoreUnits:
                                 warnings.warn('Species with same name have different units. They will not be combined. For {0} species id.'.format(species.getId())) if verbose else None
                                 break
                         if species.getConstant() != uni_sp.getConstant():
@@ -1183,6 +1186,7 @@ class Subsystem(object):
 
     def combineParameters(self, ListOfSubsystems, **kwargs):
         verbose = kwargs.get('verbose') if 'verbose' in kwargs else None
+        ignoreUnits = kwargs.get('ignoreUnits') if 'ignoreUnits' in kwargs else True
         model = self.getSBMLDocument().getModel()
         if ListOfSubsystems == []:
             model = self.getSBMLDocument().getModel()
@@ -1207,7 +1211,7 @@ class Subsystem(object):
                     for sp_id in final_parameter_hash_map[unique_parameter_str]:
                         i = model.getElementBySId(sp_id)
                         if i.isSetUnits():
-                            if i.getUnits() != uni_param.getUnits():
+                            if i.getUnits() != uni_param.getUnits() and ignoreUnits:
                                 warnings.warn('Parameters with same name have different units. They will not be combined. For {0} parameter id.'.format(i.getId())) if verbose else None
                                 break
                         if i.getConstant() != uni_param.getConstant():
@@ -1264,7 +1268,7 @@ class Subsystem(object):
                                 warnings.warn('Parameters found with same name but different values. They will not be combined together.') if verbose else None
                                 break 
                         if i.isSetUnits():
-                            if i.getUnits() != uni_param.getUnits():
+                            if i.getUnits() != uni_param.getUnits() and ignoreUnits:
                                 warnings.warn('Parameters found with same name but different units. They will not be combined together.') if verbose else None
                                 break 
                         # Constant attribute is mandatory for valid SBML parameter
@@ -1539,6 +1543,7 @@ class Subsystem(object):
 
     def combineUnitDefinitions(self, ListOfSubsystems, **kwargs):
         verbose = kwargs.get('verbose') if 'verbose' in kwargs else None
+        ignoreUnits = kwargs.get('ignoreUnits') if 'ignoreUnits' in kwargs else True
         model = self.getSBMLDocument().getModel()
         if ListOfSubsystems == []:
             model = self.getSBMLDocument().getModel()
